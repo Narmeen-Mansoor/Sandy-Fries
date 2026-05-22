@@ -305,14 +305,34 @@ app.post("/api/chat", async (req, res) => {
 
 // Configure Vite or Static files serving
 async function startServer() {
-  if (process.env.NODE_ENV !== "production") {
+  const fs = await import("fs");
+  const distPath = path.join(process.cwd(), "dist");
+  const hasDist = fs.existsSync(path.join(distPath, "index.html"));
+  
+  // Failsafe mode decision: run in Dev mode if process.env.NODE_ENV is not production,
+  // or if the dist files don't exist yet so it remains functional.
+  const isDevMode = process.env.NODE_ENV !== "production" || !hasDist;
+
+  if (isDevMode) {
+    console.log("Starting in DEVELOPMENT mode with dynamic Vite middleware fallback...");
     const vite = await createViteServer({
       server: { middlewareMode: true },
       appType: "spa",
     });
     app.use(vite.middlewares);
+    
+    app.get("*", async (req, res, next) => {
+      const url = req.originalUrl;
+      try {
+        let template = fs.readFileSync(path.resolve(process.cwd(), "index.html"), "utf-8");
+        template = await vite.transformIndexHtml(url, template);
+        res.status(200).set({ "Content-Type": "text/html" }).end(template);
+      } catch (e) {
+        next(e);
+      }
+    });
   } else {
-    const distPath = path.join(process.cwd(), "dist");
+    console.log("Starting in PRODUCTION mode, serving static files from dist...");
     app.use(express.static(distPath));
     app.get("*", (req, res) => {
       res.sendFile(path.join(distPath, "index.html"));

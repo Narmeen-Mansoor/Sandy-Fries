@@ -78,6 +78,11 @@ export default function App() {
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [lastNotification, setLastNotification] = useState<string | null>(null);
 
+  // Advanced Interactive UI customizer options
+  const [selectedMasala, setSelectedMasala] = useState<"salt" | "chatpatta" | "fire">("chatpatta");
+  const [cookMethod, setCookMethod] = useState<"deep_fry" | "air_fry" | "bake">("deep_fry");
+  const [friesWeight, setFriesWeight] = useState<number>(500); // weight in grams
+
   // Chat auto-scroll
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -234,6 +239,30 @@ export default function App() {
   // Quick QA chips clicks
   const handleFaqClick = (faq: FAQ) => {
     handleSendMessage(faq.question);
+  };
+
+  // Dynamic cooking instructions scaling guide
+  const getCookingDirections = () => {
+    switch (cookMethod) {
+      case "deep_fry":
+        return {
+          temp: "175°C (Perfect preheated oil)",
+          time: `${Math.round(4 + (friesWeight / 500) * 1.5)} - ${Math.round(6 + (friesWeight / 500) * 1.5)} minutes`,
+          tip: "🍟 Pro-tip: Keep them frozen, do NOT thaw! Shake the fryer basket halfway for that ultimate golden crunch."
+        };
+      case "air_fry":
+        return {
+          temp: "200°C (Preheated Air Fryer)",
+          time: `${Math.round(11 + (friesWeight / 500) * 2.5)} - ${Math.round(14 + (friesWeight / 500) * 2.5)} minutes`,
+          tip: "💨 Shake the drawer every 4 minutes. A gentle olive oil spray can make Gen Z aesthetic photos look jaw-dropping!"
+        };
+      case "bake":
+        return {
+          temp: "220°C (Preheated Oven)",
+          time: `${Math.round(18 + (friesWeight / 500) * 3)} - ${Math.round(23 + (friesWeight / 500) * 3)} minutes`,
+          tip: "⚡ Single layer on heavy baking sheets. Turn the golden crisps halfway using tongs for crispiness on both sides!"
+        };
+    }
   };
 
   // Calculate pricing values
@@ -471,6 +500,57 @@ export default function App() {
                 </div>
               </div>
 
+              {/* Masala Seasoning Customization */}
+              <div className="bg-gray-50 border border-gray-100 rounded-2xl p-4 flex flex-col gap-2.5">
+                <span className="text-xs text-gray-400 font-extrabold uppercase block select-none">
+                  Custom seasoning style (Included free)
+                </span>
+                <div className="grid grid-cols-3 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMasala("salt");
+                      triggerNotification("🧂 Classic Low-Salt seasoning selected!");
+                    }}
+                    className={`px-3 py-2 text-xs font-black rounded-xl border transition ${
+                      selectedMasala === "salt"
+                        ? "bg-[#004B23] border-[#004B23] text-white shadow-sm"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    🧂 Light Salt
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMasala("chatpatta");
+                      triggerNotification("🔥 Sizzling Chatpatta Masala selected!");
+                    }}
+                    className={`px-3 py-2 text-xs font-black rounded-xl border transition ${
+                      selectedMasala === "chatpatta"
+                        ? "bg-[#004B23] border-[#004B23] text-white shadow-sm"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    🔥 Chatpatta
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedMasala("fire");
+                      triggerNotification("🌶️ Gen-Z Fire Peri-Peri selected!");
+                    }}
+                    className={`px-3 py-2 text-xs font-black rounded-xl border transition ${
+                      selectedMasala === "fire"
+                        ? "bg-[#004B23] border-[#004B23] text-white shadow-sm"
+                        : "bg-white border-gray-200 text-gray-700 hover:bg-gray-100"
+                    }`}
+                  >
+                    🌶️ Peri-Peri
+                  </button>
+                </div>
+              </div>
+
               {/* Progress bar tracking for FREE Shipping (Requires >= 3 bags) */}
               <div className="bg-yellow-50/50 border border-yellow-200/60 rounded-2xl p-4">
                 <div className="flex justify-between items-center text-xs text-gray-700 font-bold mb-2">
@@ -548,6 +628,90 @@ export default function App() {
                 <span>Confirm Fresh Fries Order</span>
               </button>
 
+            </div>
+          </div>
+
+          {/* Interactive Cooking Guideline Calculator (To elevate UX perfectly!) */}
+          <div className="bg-white p-6 rounded-3xl shadow-md border border-gray-150 flex flex-col gap-4">
+            <div className="flex items-center gap-2.5">
+              <div className="p-2 rounded-xl bg-amber-50 text-[#FFB703] border border-amber-200">
+                <Flame className="w-5 h-5 fill-[#FFB703]" />
+              </div>
+              <div>
+                <h3 className="text-base font-black text-gray-900 tracking-tight">Active Crunch Calculator</h3>
+                <p className="text-[11px] text-gray-400 font-bold whitespace-nowrap">Your precise guide to premium golden crispiness</p>
+              </div>
+            </div>
+
+            {/* Selector tabs for Appliance */}
+            <div className="grid grid-cols-3 gap-1 bg-gray-100 p-1 rounded-xl border border-gray-150">
+              <button
+                type="button"
+                onClick={() => setCookMethod("deep_fry")}
+                className={`py-2 text-xs font-bold rounded-lg transition ${
+                  cookMethod === "deep_fry" ? "bg-white text-[#004B23] shadow-xs font-blackScale" : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                Deep Fry
+              </button>
+              <button
+                type="button"
+                onClick={() => setCookMethod("air_fry")}
+                className={`py-2 text-xs font-bold rounded-lg transition ${
+                  cookMethod === "air_fry" ? "bg-white text-[#004B23] shadow-xs font-blackScale" : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                Air Fry
+              </button>
+              <button
+                type="button"
+                onClick={() => setCookMethod("bake")}
+                className={`py-2 text-xs font-bold rounded-lg transition ${
+                  cookMethod === "bake" ? "bg-white text-[#004B23] shadow-xs font-blackScale" : "text-gray-500 hover:text-gray-900"
+                }`}
+              >
+                Oven Bake
+              </button>
+            </div>
+
+            {/* Slider for Portion in grams */}
+            <div className="flex flex-col gap-2 bg-gray-50 p-4 rounded-xl border border-gray-100">
+              <div className="flex justify-between items-center text-xs">
+                <span className="text-gray-500 font-extrabold">Fries Portion Size</span>
+                <span className="text-[#004B23] font-black bg-yellow-100 px-2 py-0.5 rounded text-xs select-none">
+                  {friesWeight} grams
+                </span>
+              </div>
+              <input
+                type="range"
+                min="200"
+                max="1000"
+                step="50"
+                value={friesWeight}
+                onChange={(e) => setFriesWeight(Number(e.target.value))}
+                className="w-full accent-[#004B23] h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-1"
+              />
+              <div className="flex justify-between text-[10px] text-gray-400 font-extrabold font-mono mt-0.5">
+                <span>Min: 200g (Munchies)</span>
+                <span>Max: 1000g (Karahi Pack)</span>
+              </div>
+            </div>
+
+            {/* Computed targets and tips */}
+            <div className="bg-gradient-to-br from-[#004B23] to-[#002B13] text-white p-4.5 rounded-2xl flex flex-col gap-3 shadow-md border-b-4 border-[#FFB703]">
+              <div className="grid grid-cols-2 gap-3 border-b border-green-800/60 pb-3">
+                <div>
+                  <span className="text-[10px] text-green-300 font-black uppercase block tracking-wider">COOKING TEMP</span>
+                  <span className="text-xs sm:text-xs font-mono font-black text-yellow-300">{getCookingDirections().temp}</span>
+                </div>
+                <div>
+                  <span className="text-[10px] text-green-300 font-black uppercase block tracking-wider">TIMER ESTIMATE</span>
+                  <span className="text-xs sm:text-xs font-mono font-black text-yellow-300">{getCookingDirections().time}</span>
+                </div>
+              </div>
+              <p className="text-xs text-green-100 font-medium leading-relaxed italic">
+                {getCookingDirections().tip}
+              </p>
             </div>
           </div>
 
@@ -949,6 +1113,12 @@ export default function App() {
                     <span>Rs. {rawSubtotal.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
+                    <span>Selected Seasoning</span>
+                    <span className="font-sans font-bold text-gray-900 border border-yellow-300 bg-yellow-50 px-1.5 py-0.5 rounded uppercase">
+                      {selectedMasala === "salt" ? "🧂 Light Salt" : selectedMasala === "chatpatta" ? "🔥 Chatpatta" : "🌶️ Peri-Peri"}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
                     <span>Delivery Coordinate Logistics</span>
                     <span>{cart.quantity >= 3 ? "FREE" : `Rs. ${cart.deliveryFee}`}</span>
                   </div>
@@ -974,7 +1144,7 @@ export default function App() {
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
                   <a 
                     href={`https://wa.me/923000000000?text=${encodeURIComponent(
-                      `Assalam-o-Alaikum! Please confirm my Sandy Frozen Fries order of ${cart.quantity} bags for ${cart.area}, ${cart.city}. Total: Rs. ${grandTotal}.`
+                      `Assalam-o-Alaikum! Please confirm my Sandy Frozen Fries order of ${cart.quantity} bags with ${selectedMasala === "salt" ? "Light Salt" : selectedMasala === "chatpatta" ? "Chatpatta option" : "Peri-Peri season"} for ${cart.area}, ${cart.city}. Total: Rs. ${grandTotal}.`
                     )}`}
                     target="_blank"
                     rel="noreferrer"
