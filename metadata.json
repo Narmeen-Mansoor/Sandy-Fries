@@ -1,0 +1,6 @@
+{
+  "name": "Sandy's AI Fry-Guide",
+  "description": "Energetic and witty virtual assistant for Sandy Frozen Fries - helping with nationwide delivery and seamless order placement within Pakistan.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
